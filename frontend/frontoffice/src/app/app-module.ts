@@ -1,4 +1,4 @@
-import { NgModule,  APP_INITIALIZER } from '@angular/core';
+import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing-module';
@@ -9,12 +9,13 @@ import { HomeComponent } from './home/home.component';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
 import keycloakConfig from './keycloak.config';
 import { DiagnosticComponent } from './diagnostic/diagnostic.component';
 import { PharmacyComponent } from './pharmacy/pharmacy.component';
-
+import { HospitalizationComponent } from './hospitalization/hospitalization.component';
 
 function initializeKeycloak(keycloak: KeycloakService) {
   return () =>
@@ -34,16 +35,17 @@ function initializeKeycloak(keycloak: KeycloakService) {
     FooterComponent,
     HomeComponent,
     DiagnosticComponent,
-    PharmacyComponent
+    PharmacyComponent,
+    HospitalizationComponent
   ],
   imports: [
+    CommonModule,
     BrowserModule,
     AppRoutingModule,
     FormsModule,
     KeycloakAngularModule,
     HttpClientModule,
     ReactiveFormsModule
-
   ],
   providers: [
     {

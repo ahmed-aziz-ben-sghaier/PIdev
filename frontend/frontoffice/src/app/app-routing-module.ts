@@ -2,10 +2,9 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { AuthGuard } from './guards/auth-guard';
-import {DiagnosticComponent} from './diagnostic/diagnostic.component';
+import { DiagnosticComponent } from './diagnostic/diagnostic.component';
 import { PharmacyComponent } from './pharmacy/pharmacy.component';
-
-
+import { HospitalizationComponent } from './hospitalization/hospitalization.component';
 
 const routes: Routes = [
   {
@@ -17,21 +16,22 @@ const routes: Routes = [
     path: 'diagnostic',
     component: DiagnosticComponent
   },
-  { path: 'pharmacy',
-     component: PharmacyComponent },
+  {
+    path: 'pharmacy',
+    component: PharmacyComponent
+  },
+  {
+    path: 'hospitalization',
+    component: HospitalizationComponent
+  },
   {
     path: '**',
     redirectTo: ''
-  },
-  {
-    path: 'diagnostic',
-    component: DiagnosticComponent
   }
-
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}
