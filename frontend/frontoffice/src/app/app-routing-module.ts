@@ -16,9 +16,11 @@ const routes: Routes = [
     path: 'diagnostic',
     component: DiagnosticComponent
   },
-  {
+ {
     path: 'pharmacy',
-    component: PharmacyComponent
+    component: PharmacyComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['PATIENT'] }
   },
   {
     path: 'hospitalization',

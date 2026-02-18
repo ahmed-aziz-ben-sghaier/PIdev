@@ -2,32 +2,32 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+export interface Medication {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  quantity: number;
+  expirationDate: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class PharmacyService {
 
-  private backendUrl = 'http://localhost:8087/api/pharmacy/prescriptions';
+  // 🔗 URL de ton backend (même que Back-Office)
+  private baseUrl = 'http://localhost:8087/api/medications';
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<any[]> {
-    return this.http.get<any[]>(this.backendUrl);
+  // 🔹 GET ALL (Front-Office : consultation)
+  getAll(): Observable<Medication[]> {
+    return this.http.get<Medication[]>(this.baseUrl);
   }
 
-  getById(id: string): Observable<any> {
-    return this.http.get<any>(`${this.backendUrl}/${id}`);
-  }
-
-  create(prescription: any): Observable<any> {
-    return this.http.post<any>(this.backendUrl, prescription);
-  }
-
-  update(id: string, prescription: any): Observable<any> {
-    return this.http.put<any>(`${this.backendUrl}/${id}`, prescription);
-  }
-
-  delete(id: string): Observable<any> {
-    return this.http.delete(`${this.backendUrl}/${id}`);
+  // 🔹 GET BY ID (utile plus tard : détails, panier, prescription)
+  getById(id: number): Observable<Medication> {
+    return this.http.get<Medication>(`${this.baseUrl}/${id}`);
   }
 }

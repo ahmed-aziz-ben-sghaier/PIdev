@@ -98,6 +98,17 @@ export class AppSidebarComponent {
         { name: "Sign Up", path: "/signup", pro: false },
       ],
     },
+
+    {
+  icon: `<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none">
+    <path fill-rule="evenodd" clip-rule="evenodd"
+      d="M7 2C5.34315 2 4 3.34315 4 5V19C4 20.6569 5.34315 22 7 22H17C18.6569 22 20 20.6569 20 19V5C20 3.34315 18.6569 2 17 2H7ZM6 5C6 4.44772 6.44772 4 7 4H17C17.5523 4 18 4.44772 18 5V19C18 19.5523 17.5523 20 17 20H7C6.44772 20 6 19.5523 6 19V5ZM11 7H13V11H17V13H13V17H11V13H7V11H11V7Z"
+      fill="currentColor"/>
+  </svg>`,
+  name: "Pharmacy",
+  path: "/pharmacy",
+},
+
   ];
 
   openSubmenu: string | null | number = null;

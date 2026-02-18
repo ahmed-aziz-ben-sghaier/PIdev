@@ -1,0 +1,67 @@
+<div class="pharmacy-container">
+
+  <h2>💊 Pharmacy Management (Back Office)</h2>
+
+  <!-- FORM -->
+  <form [formGroup]="pharmacyForm" (ngSubmit)="submit()" class="pharmacy-form">
+    <div class="form-group">
+      <label>Name</label>
+      <input type="text" formControlName="name" />
+    </div>
+
+    <div class="form-group">
+      <label>Description</label>
+      <textarea formControlName="description"></textarea>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Price (DT)</label>
+        <input type="number" formControlName="price" />
+      </div>
+
+      <div class="form-group">
+        <label>Quantity</label>
+        <input type="number" formControlName="quantity" />
+      </div>
+
+      <div class="form-group">
+        <label>Expiration Date</label>
+        <input type="date" formControlName="expirationDate" />
+      </div>
+    </div>
+
+    <button type="submit">
+      {{ selectedId ? 'Update' : 'Create' }}
+    </button>
+  </form>
+
+  <hr />
+
+  <!-- TABLE -->
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Quantity</th>
+        <th>Expiration</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let med of medications">
+        <td>{{ med.name }}</td>
+        <td>{{ med.price }} DT</td>
+        <td>{{ med.quantity }}</td>
+        <td>{{ med.expirationDate | date }}</td>
+        <td>
+          <button class="edit" (click)="edit(med)">Edit</button>
+          <button class="delete" (click)="delete(med.id)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
