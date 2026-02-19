@@ -1,0 +1,347 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Roboto+Condensed:wght@700&display=swap');
+
+.pharmacy-front {
+  padding: 30px;
+  max-width: 1100px;
+  margin: auto;
+  font-family: 'Nunito', sans-serif;
+  color: #2d3748;
+
+  /* ── Page Header ── */
+  .page-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: linear-gradient(135deg, #1D2A4D 0%, #2563eb 100%);
+    padding: 1.5rem 2rem;
+    border-radius: 16px;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 24px rgba(29, 42, 77, 0.3);
+
+    &__icon {
+      width: 50px;
+      height: 50px;
+      background: rgba(255,255,255,.15);
+      border: 2px solid rgba(255,255,255,.25);
+      border-radius: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    &__sub {
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.55);
+      margin: 0 0 .2rem;
+    }
+
+    &__title {
+      font-family: 'Roboto Condensed', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #fff;
+      margin: 0;
+    }
+  }
+
+  /* ── Cards ── */
+  .card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e2e8f0;
+    margin-bottom: 24px;
+    overflow: hidden;
+    animation: fadeUp .3s ease both;
+
+    &:nth-child(3) { animation-delay: .08s; }
+  }
+
+  .card-title {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    padding: 1rem 1.5rem;
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: .9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: #1D2A4D;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e2e8f0;
+
+    i { color: #0d6efd; }
+  }
+
+  .mode-badge {
+    margin-left: auto;
+    font-size: .65rem;
+    font-weight: 800;
+    padding: .25em .8em;
+    border-radius: 50px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    background: #dbeafe;
+    color: #1d4ed8;
+    font-family: 'Nunito', sans-serif;
+
+    &.edit-mode { background: #fef3c7; color: #d97706; }
+  }
+
+  .count-badge {
+    margin-left: auto;
+    font-size: .65rem;
+    font-weight: 800;
+    padding: .25em .8em;
+    border-radius: 50px;
+    background: #1D2A4D;
+    color: #fff;
+    font-family: 'Nunito', sans-serif;
+    letter-spacing: .03em;
+  }
+
+  /* ── Form ── */
+  .form-card form { padding: 1.5rem; }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+
+    .full { grid-column: span 3; }
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      .full { grid-column: span 1; }
+    }
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: .35rem;
+
+    label {
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      gap: .35rem;
+
+      i { color: #0d6efd; font-size: .75rem; }
+    }
+
+    input, textarea {
+      padding: .65rem .9rem;
+      border-radius: 8px;
+      border: 1.5px solid #e2e8f0;
+      font-family: 'Nunito', sans-serif;
+      font-size: .875rem;
+      font-weight: 500;
+      color: #2d3748;
+      background: #f8f9fa;
+      transition: border-color .2s, box-shadow .2s, background .2s;
+      outline: none;
+
+      &:focus {
+        border-color: #0d6efd;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(13,110,253,.12);
+      }
+
+      &::placeholder { color: #94a3b8; }
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+  }
+
+  /* ── Buttons ── */
+  .form-actions {
+    display: flex;
+    gap: .75rem;
+    margin-top: 1.25rem;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    padding: .65rem 1.25rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: .85rem;
+    transition: all .2s;
+
+    &.primary {
+      background: #0d6efd;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(13,110,253,.35);
+
+      &:hover {
+        background: #0b5ed7;
+        box-shadow: 0 4px 14px rgba(13,110,253,.4);
+        transform: translateY(-1px);
+      }
+    }
+
+    &.cancel {
+      background: #fff;
+      color: #64748b;
+      border: 1.5px solid #e2e8f0;
+
+      &:hover { border-color: #94a3b8; color: #2d3748; }
+    }
+
+    &.edit {
+      background: #dbeafe;
+      color: #1d4ed8;
+
+      &:hover { background: #1d4ed8; color: #fff; transform: scale(1.04); }
+    }
+
+    &.delete {
+      background: #fee2e2;
+      color: #dc2626;
+
+      &:hover { background: #dc2626; color: #fff; transform: scale(1.04); }
+    }
+  }
+
+  /* ── Table ── */
+  .table-wrap { overflow-x: auto; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .875rem;
+
+    thead tr { background: #1D2A4D; }
+
+    thead th {
+      padding: .85rem 1.1rem;
+      text-align: left;
+      font-size: .68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: rgba(255,255,255,.7);
+      white-space: nowrap;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #f1f5f9;
+      transition: background .15s;
+
+      &:last-child { border-bottom: none; }
+      &:hover { background: #f0f6ff; }
+    }
+
+    tbody td {
+      padding: .85rem 1.1rem;
+      vertical-align: middle;
+    }
+  }
+
+  /* Med cell */
+  .med-cell {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    font-weight: 700;
+
+    &__icon {
+      width: 30px;
+      height: 30px;
+      background: linear-gradient(135deg, #0d6efd, #2563eb);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: .7rem;
+      flex-shrink: 0;
+    }
+  }
+
+  /* Price */
+  .price-tag {
+    font-weight: 800;
+    font-size: .9rem;
+    color: #1D2A4D;
+
+    small { font-size: .72rem; color: #64748b; font-weight: 600; }
+  }
+
+  /* Date */
+  .date-cell {
+    font-size: .82rem;
+    color: #64748b;
+    white-space: nowrap;
+
+    i { margin-right: .3rem; color: #10b981; }
+  }
+
+  /* Badges */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    padding: .3em .85em;
+    border-radius: 50px;
+    font-size: .75rem;
+    font-weight: 800;
+
+    .dot { font-size: .4rem; }
+
+    &.ok  { background: #d1fae5; color: #065f46; }
+    &.low { background: #fee2e2; color: #991b1b; }
+  }
+
+  /* Actions */
+  .actions {
+    display: flex;
+    gap: .5rem;
+  }
+
+  /* Empty row */
+  .empty-row {
+    text-align: center;
+    padding: 3rem !important;
+    color: #94a3b8;
+
+    i {
+      font-size: 2.5rem;
+      opacity: .3;
+      display: block;
+      margin-bottom: .75rem;
+    }
+
+    p { font-size: .9rem; margin: 0; }
+  }
+}
+
+/* Animation */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 600px) {
+  .pharmacy-front { padding: 15px; }
+}

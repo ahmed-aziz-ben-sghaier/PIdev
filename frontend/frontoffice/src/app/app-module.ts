@@ -1,21 +1,20 @@
 import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
 
 import { AppRoutingModule } from './app-routing-module';
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { FooterComponent } from './shared/footer/footer.component';
 import { HomeComponent } from './home/home.component';
-import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
-import { ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-
-import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
-import keycloakConfig from './keycloak.config';
 import { DiagnosticComponent } from './diagnostic/diagnostic.component';
 import { PharmacyComponent } from './pharmacy/pharmacy.component';
 import { HospitalizationComponent } from './hospitalization/hospitalization.component';
+
+import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
+import keycloakConfig from './keycloak.config';
 
 function initializeKeycloak(keycloak: KeycloakService) {
   return () =>
@@ -24,7 +23,7 @@ function initializeKeycloak(keycloak: KeycloakService) {
       initOptions: {
         onLoad: 'login-required',
         checkLoginIframe: false
-      },
+      }
     });
 }
 
@@ -39,13 +38,13 @@ function initializeKeycloak(keycloak: KeycloakService) {
     HospitalizationComponent
   ],
   imports: [
-    CommonModule,
     BrowserModule,
+    CommonModule,
     AppRoutingModule,
     FormsModule,
-    KeycloakAngularModule,
+    ReactiveFormsModule,
     HttpClientModule,
-    ReactiveFormsModule
+    KeycloakAngularModule
   ],
   providers: [
     {

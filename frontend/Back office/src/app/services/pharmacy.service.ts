@@ -17,7 +17,7 @@ export interface Medication {
 export class PharmacyService {
 
   // ⚠️ adapte l’URL selon TON backend
-  private baseUrl = 'http://localhost:8079/api/medications';
+  private baseUrl = 'http://localhost:8070/pharmacy/api/medications';
 
   constructor(private http: HttpClient) {}
 

@@ -1,0 +1,318 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap');
+
+.pharmacy-front {
+  min-height: 100vh;
+  background: #f0f4f8;
+  font-family: 'Nunito', sans-serif;
+}
+
+/* ── Header ── */
+.rx-page-header {
+  background: linear-gradient(135deg, #1D2A4D 0%, #2563eb 100%);
+  padding: 2rem 2rem 3.5rem;
+  border-radius: 0 0 1.25rem 1.25rem;
+  margin-bottom: -2rem;
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .breadcrumb-label {
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.6);
+    margin-bottom: .3rem;
+  }
+
+  h1 {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+  }
+
+  .header-icon {
+    width: 52px;
+    height: 52px;
+    background: rgba(255,255,255,.15);
+    border: 2px solid rgba(255,255,255,.25);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    color: #fff;
+    flex-shrink: 0;
+  }
+}
+
+/* ── Content ── */
+.pf-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 3rem;
+}
+
+/* ── States ── */
+.pf-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #64748b;
+
+  .pf-state-icon {
+    font-size: 3rem;
+    opacity: .35;
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 .35rem;
+  }
+
+  small {
+    font-size: .85rem;
+    opacity: .75;
+  }
+
+  &--error {
+    .pf-state-icon { color: #ef4444; opacity: .6; }
+    p { color: #dc2626; }
+  }
+}
+
+.btn-retry {
+  margin-top: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .6rem 1.4rem;
+  background: #0d6efd;
+  color: #fff;
+  border: none;
+  border-radius: .5rem;
+  font-family: 'Nunito', sans-serif;
+  font-size: .85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .2s;
+
+  &:hover { background: #0b5ed7; }
+}
+
+/* ── Cards Grid ── */
+.medication-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.medication-card {
+  background: #fff;
+  border-radius: 1rem;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 16px rgba(0,0,0,.08);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: .85rem;
+  transition: transform .2s, box-shadow .2s;
+  animation: fadeSlideIn .35s ease both;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0,0,0,.12);
+  }
+
+  &.card--expiring {
+    border-color: #f59e0b;
+    background: #fffdf5;
+  }
+
+  &.card--out {
+    border-color: #fca5a5;
+    background: #fff5f5;
+    opacity: .85;
+  }
+}
+
+/* Card Header */
+.mc-header {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+}
+
+.mc-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #0d6efd, #2563eb);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: .9rem;
+  flex-shrink: 0;
+}
+
+.mc-title {
+  h3 {
+    font-size: .95rem;
+    font-weight: 800;
+    color: #1D2A4D;
+    margin: 0 0 .1rem;
+  }
+
+  .mc-id {
+    font-size: .72rem;
+    color: #94a3b8;
+    font-weight: 600;
+  }
+}
+
+/* Description */
+.mc-description {
+  font-size: .82rem;
+  color: #64748b;
+  line-height: 1.5;
+  margin: 0;
+  flex: 1;
+}
+
+/* Info Row */
+.mc-info {
+  display: flex;
+  gap: .75rem;
+  flex-wrap: wrap;
+}
+
+.mc-info-item {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  font-size: .82rem;
+  color: #2d3748;
+  background: #f8f9fa;
+  border: 1px solid #e2e8f0;
+  border-radius: .4rem;
+  padding: .35rem .7rem;
+
+  i {
+    color: #0d6efd;
+    font-size: .78rem;
+  }
+
+  strong { color: #1D2A4D; }
+
+  &.stock-low {
+    border-color: #f59e0b;
+    background: #fffbeb;
+    i { color: #d97706; }
+  }
+}
+
+/* Expiry */
+.mc-expiry {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  font-size: .78rem;
+  color: #64748b;
+
+  i {
+    font-size: .8rem;
+    color: #10b981;
+  }
+
+  &.expiry-warn {
+    color: #d97706;
+    i { color: #d97706; }
+  }
+}
+
+.expiry-badge {
+  margin-left: auto;
+  font-size: .65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  background: #fef3c7;
+  color: #92400e;
+  padding: .2em .6em;
+  border-radius: 50px;
+}
+
+/* Stock Bar */
+.mc-stock-bar {
+  height: 5px;
+  background: rgba(0,0,0,.07);
+  border-radius: 50px;
+  overflow: hidden;
+
+  .mc-stock-fill {
+    height: 100%;
+    border-radius: 50px;
+    transition: width .5s ease;
+
+    &.fill-ok  { background: #10b981; }
+    &.fill-low { background: #f59e0b; }
+    &.fill-out { background: #ef4444; width: 100% !important; }
+  }
+}
+
+/* Button */
+.mc-btn {
+  width: 100%;
+  height: 42px;
+  border: none;
+  border-radius: .5rem;
+  font-family: 'Nunito', sans-serif;
+  font-size: .85rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  transition: all .2s;
+
+  &--available {
+    background: #0d6efd;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(13,110,253,.3);
+
+    &:hover {
+      background: #0b5ed7;
+      transform: translateY(-1px);
+    }
+  }
+
+  &--out {
+    background: #f1f5f9;
+    color: #94a3b8;
+    cursor: not-allowed;
+  }
+
+  &:disabled { cursor: not-allowed; }
+}
+
+/* Animation */
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .pf-content { padding: 1.5rem 1rem 2rem; }
+  .medication-list { grid-template-columns: 1fr; }
+}

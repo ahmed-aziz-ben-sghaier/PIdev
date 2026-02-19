@@ -1,0 +1,115 @@
+<div class="pharmacy-front">
+
+  <div class="rx-page-header">
+    <div class="header-inner">
+      <div class="header-icon">
+        <i class="fas fa-pills"></i>
+      </div>
+      <div>
+        <div class="breadcrumb-label">Front Office / Pharmacy</div>
+        <h1>Available Medications</h1>
+      </div>
+    </div>
+  </div>
+
+  <div class="pf-content">
+
+    <!-- Loading -->
+    <div class="pf-state" *ngIf="loading">
+      <i class="fas fa-spinner fa-spin pf-state-icon"></i>
+      <p>Loading medications...</p>
+    </div>
+
+    <!-- Error -->
+    <div class="pf-state pf-state--error" *ngIf="error && !loading">
+      <i class="fas fa-exclamation-circle pf-state-icon"></i>
+      <p>Failed to load medications.</p>
+      <small>Please check your connection or try again later.</small>
+      <button class="btn-retry" (click)="loadMedications()">
+        <i class="fas fa-redo"></i> Retry
+      </button>
+    </div>
+
+    <!-- Empty -->
+    <div class="pf-state" *ngIf="!loading && !error && medications.length === 0">
+      <i class="fas fa-prescription-bottle pf-state-icon"></i>
+      <p>No medications available.</p>
+    </div>
+
+    <!-- Cards Grid -->
+    <div class="medication-list"
+         *ngIf="!loading && !error && medications.length > 0">
+
+      <div class="medication-card"
+           *ngFor="let med of medications"
+           [class.card--expiring]="isExpiringSoon(med.expirationDate)"
+           [class.card--out]="med.quantity === 0">
+
+        <!-- Header -->
+        <div class="mc-header">
+          <div class="mc-icon">
+            <i class="fas fa-capsules"></i>
+          </div>
+          <div class="mc-title">
+            <h3>{{ med.name }}</h3>
+            <span class="mc-id">#{{ med.id }}</span>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <p class="mc-description">
+          {{ med.description || 'No description available.' }}
+        </p>
+
+        <!-- Info -->
+        <div class="mc-info">
+          <div class="mc-info-item">
+            <i class="fas fa-tag"></i>
+            <span>{{ med.price | number:'1.2-2' }} <strong>DT</strong></span>
+          </div>
+          <div class="mc-info-item"
+               [class.stock-low]="med.quantity > 0 && med.quantity <= 10">
+            <i class="fas fa-boxes"></i>
+            <span>Stock: <strong>{{ med.quantity }}</strong></span>
+          </div>
+        </div>
+
+        <!-- Expiry -->
+        <div class="mc-expiry"
+             [class.expiry-warn]="isExpiringSoon(med.expirationDate)">
+          <i class="fas fa-calendar-check"
+             *ngIf="!isExpiringSoon(med.expirationDate)"></i>
+          <i class="fas fa-calendar-times"
+             *ngIf="isExpiringSoon(med.expirationDate)"></i>
+          <span>Expires: {{ med.expirationDate | date:'mediumDate' }}</span>
+          <span class="expiry-badge"
+                *ngIf="isExpiringSoon(med.expirationDate)">
+            Expiring soon
+          </span>
+        </div>
+
+        <!-- Stock Bar -->
+        <div class="mc-stock-bar">
+          <div class="mc-stock-fill"
+               [style.width.%]="med.quantity > 100 ? 100 : med.quantity"
+               [class.fill-ok]="med.quantity > 10"
+               [class.fill-low]="med.quantity > 0 && med.quantity <= 10"
+               [class.fill-out]="med.quantity === 0">
+          </div>
+        </div>
+
+        <!-- Button -->
+        <button class="mc-btn"
+                [disabled]="med.quantity === 0"
+                [class.mc-btn--available]="med.quantity > 0"
+                [class.mc-btn--out]="med.quantity === 0">
+          <i class="fas fa-check-circle" *ngIf="med.quantity > 0"></i>
+          <i class="fas fa-times-circle" *ngIf="med.quantity === 0"></i>
+          {{ med.quantity > 0 ? 'Available' : 'Out of Stock' }}
+        </button>
+
+      </div>
+    </div>
+
+  </div>
+</div>
