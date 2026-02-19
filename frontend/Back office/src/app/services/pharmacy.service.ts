@@ -1,14 +1,18 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { MedicationRoute } from './medication-route.enum';
 
 export interface Medication {
-  id?: number;
-  name: string;
-  description?: string;
-  price: number;
+  id?: string;
+  medicationName: string;
+  dosage?: string;
+  frequency?: number;
+  route?: MedicationRoute;
+  duration?: number;
   quantity: number;
-  expirationDate: string;
+  startDate?: string;
+  endDate?: string;
 }
 
 @Injectable({
@@ -16,28 +20,23 @@ export interface Medication {
 })
 export class PharmacyService {
 
-  // ⚠️ adapte l’URL selon TON backend
   private baseUrl = 'http://localhost:8070/pharmacy/api/medications';
 
   constructor(private http: HttpClient) {}
 
-  // 🔹 GET ALL (Back Office)
   getAll(): Observable<Medication[]> {
     return this.http.get<Medication[]>(this.baseUrl);
   }
 
-  // 🔹 CREATE
   create(medication: Medication): Observable<Medication> {
     return this.http.post<Medication>(this.baseUrl, medication);
   }
 
-  // 🔹 UPDATE
-  update(id: number, medication: Medication): Observable<Medication> {
+  update(id: string, medication: Medication): Observable<Medication> {
     return this.http.put<Medication>(`${this.baseUrl}/${id}`, medication);
   }
 
-  // 🔹 DELETE
-  delete(id: number): Observable<void> {
+  delete(id: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 }

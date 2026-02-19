@@ -19,6 +19,8 @@ export class PharmacyComponent implements OnInit {
   }
 
   loadMedications(): void {
+    this.loading = true;
+    this.error = false;
     this.pharmacyService.getAll().subscribe({
       next: (data) => {
         this.medications = data;
@@ -32,7 +34,7 @@ export class PharmacyComponent implements OnInit {
     });
   }
 
-  isExpiringSoon(dateStr: string): boolean {
+  isExpiringSoon(dateStr?: string): boolean {
     if (!dateStr) return false;
     const expiry = new Date(dateStr);
     const now = new Date();

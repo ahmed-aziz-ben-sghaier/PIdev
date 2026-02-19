@@ -19,40 +19,50 @@
 
     <form [formGroup]="pharmacyForm" (ngSubmit)="submit()">
       <div class="form-grid">
-        <div class="form-group">
-          <label>
-            <i class="fas fa-prescription-bottle-alt"></i> Name
-          </label>
-          <input type="text" formControlName="name" placeholder="e.g. Amoxicillin 250mg" />
-        </div>
 
-        <div class="form-group full">
-          <label>
-            <i class="fas fa-align-left"></i> Description
-          </label>
-          <textarea formControlName="description" placeholder="Usage, notes, contraindications..."></textarea>
+        <div class="form-group">
+          <label><i class="fas fa-prescription-bottle-alt"></i> Name</label>
+          <input type="text" formControlName="medicationName" placeholder="e.g. Amoxicillin 250mg" />
         </div>
 
         <div class="form-group">
-          <label>
-            <i class="fas fa-coins"></i> Price (DT)
-          </label>
-          <input type="number" formControlName="price" placeholder="0.00" min="0" step="0.01" />
+          <label><i class="fas fa-flask"></i> Dosage</label>
+          <input type="text" formControlName="dosage" placeholder="e.g. 500mg" />
         </div>
 
         <div class="form-group">
-          <label>
-            <i class="fas fa-boxes"></i> Quantity
-          </label>
+          <label><i class="fas fa-redo"></i> Frequency (times/day)</label>
+          <input type="number" formControlName="frequency" placeholder="e.g. 3" min="1" />
+        </div>
+
+        <div class="form-group">
+          <label><i class="fas fa-route"></i> Route</label>
+          <select formControlName="route">
+            <option [ngValue]="null" disabled>Select route</option>
+            <option *ngFor="let r of routes" [value]="r">{{ r }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label><i class="fas fa-clock"></i> Duration (days)</label>
+          <input type="number" formControlName="duration" placeholder="e.g. 7" min="1" />
+        </div>
+
+        <div class="form-group">
+          <label><i class="fas fa-boxes"></i> Quantity</label>
           <input type="number" formControlName="quantity" placeholder="0" min="0" />
         </div>
 
         <div class="form-group">
-          <label>
-            <i class="fas fa-calendar-alt"></i> Expiration Date
-          </label>
-          <input type="date" formControlName="expirationDate" />
+          <label><i class="fas fa-calendar-plus"></i> Start Date</label>
+          <input type="date" formControlName="startDate" />
         </div>
+
+        <div class="form-group">
+          <label><i class="fas fa-calendar-alt"></i> End Date (Expiration)</label>
+          <input type="date" formControlName="endDate" />
+        </div>
+
       </div>
 
       <div class="form-actions">
@@ -79,9 +89,10 @@
         <thead>
           <tr>
             <th>Medication</th>
-            <th>Price</th>
+            <th>Dosage</th>
+            <th>Route</th>
             <th>Stock</th>
-            <th>Expiration</th>
+            <th>End Date</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -90,12 +101,11 @@
             <td>
               <div class="med-cell">
                 <div class="med-cell__icon"><i class="fas fa-capsules"></i></div>
-                <span>{{ med.name }}</span>
+                <span>{{ med.medicationName }}</span>
               </div>
             </td>
-            <td>
-              <span class="price-tag">{{ med.price | number:'1.2-2' }} <small>DT</small></span>
-            </td>
+            <td>{{ med.dosage || '—' }}</td>
+            <td>{{ med.route || '—' }}</td>
             <td>
               <span class="badge" [class.low]="med.quantity < 10" [class.ok]="med.quantity >= 10">
                 <i class="fas fa-circle dot"></i>
@@ -104,7 +114,7 @@
             </td>
             <td class="date-cell">
               <i class="fas fa-calendar-check"></i>
-              {{ med.expirationDate | date:'mediumDate' }}
+              {{ med.endDate | date:'mediumDate' }}
             </td>
             <td class="actions">
               <button class="btn edit" (click)="edit(med)" title="Edit">
@@ -116,7 +126,7 @@
             </td>
           </tr>
           <tr *ngIf="medications.length === 0">
-            <td colspan="5" class="empty-row">
+            <td colspan="6" class="empty-row">
               <i class="fas fa-prescription-bottle"></i>
               <p>No medications yet. Add your first one above.</p>
             </td>

@@ -42,7 +42,7 @@
 
       <div class="medication-card"
            *ngFor="let med of medications"
-           [class.card--expiring]="isExpiringSoon(med.expirationDate)"
+           [class.card--expiring]="isExpiringSoon(med.endDate)"
            [class.card--out]="med.quantity === 0">
 
         <!-- Header -->
@@ -51,39 +51,41 @@
             <i class="fas fa-capsules"></i>
           </div>
           <div class="mc-title">
-            <h3>{{ med.name }}</h3>
+            <h3>{{ med.medicationName }}</h3>
             <span class="mc-id">#{{ med.id }}</span>
           </div>
         </div>
 
-        <!-- Description -->
-        <p class="mc-description">
-          {{ med.description || 'No description available.' }}
-        </p>
+        <!-- Dosage / Route -->
+        <div class="mc-meta" *ngIf="med.dosage || med.route">
+          <span *ngIf="med.dosage"><i class="fas fa-flask"></i> {{ med.dosage }}</span>
+          <span *ngIf="med.route"><i class="fas fa-route"></i> {{ med.route }}</span>
+        </div>
 
         <!-- Info -->
         <div class="mc-info">
-          <div class="mc-info-item">
-            <i class="fas fa-tag"></i>
-            <span>{{ med.price | number:'1.2-2' }} <strong>DT</strong></span>
-          </div>
           <div class="mc-info-item"
                [class.stock-low]="med.quantity > 0 && med.quantity <= 10">
             <i class="fas fa-boxes"></i>
             <span>Stock: <strong>{{ med.quantity }}</strong></span>
           </div>
+          <div class="mc-info-item" *ngIf="med.duration">
+            <i class="fas fa-clock"></i>
+            <span>Duration: <strong>{{ med.duration }} days</strong></span>
+          </div>
         </div>
 
         <!-- Expiry -->
         <div class="mc-expiry"
-             [class.expiry-warn]="isExpiringSoon(med.expirationDate)">
+             [class.expiry-warn]="isExpiringSoon(med.endDate)"
+             *ngIf="med.endDate">
           <i class="fas fa-calendar-check"
-             *ngIf="!isExpiringSoon(med.expirationDate)"></i>
+             *ngIf="!isExpiringSoon(med.endDate)"></i>
           <i class="fas fa-calendar-times"
-             *ngIf="isExpiringSoon(med.expirationDate)"></i>
-          <span>Expires: {{ med.expirationDate | date:'mediumDate' }}</span>
+             *ngIf="isExpiringSoon(med.endDate)"></i>
+          <span>Expires: {{ med.endDate | date:'mediumDate' }}</span>
           <span class="expiry-badge"
-                *ngIf="isExpiringSoon(med.expirationDate)">
+                *ngIf="isExpiringSoon(med.endDate)">
             Expiring soon
           </span>
         </div>

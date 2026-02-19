@@ -3,12 +3,15 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface Medication {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
+  id: string;
+  medicationName: string;
+  dosage?: string;
+  frequency?: number;
+  route?: string;
+  duration?: number;
   quantity: number;
-  expirationDate: string;
+  startDate?: string;
+  endDate?: string;
 }
 
 @Injectable({
@@ -16,18 +19,15 @@ export interface Medication {
 })
 export class PharmacyService {
 
-  // 🔗 URL de ton backend (même que Back-Office)
-  private baseUrl = 'http://localhost:8087/api/medications';
+  private baseUrl = 'http://localhost:8070/pharmacy/api/medications';
 
   constructor(private http: HttpClient) {}
 
-  // 🔹 GET ALL (Front-Office : consultation)
   getAll(): Observable<Medication[]> {
     return this.http.get<Medication[]>(this.baseUrl);
   }
 
-  // 🔹 GET BY ID (utile plus tard : détails, panier, prescription)
-  getById(id: number): Observable<Medication> {
+  getById(id: string): Observable<Medication> {
     return this.http.get<Medication>(`${this.baseUrl}/${id}`);
   }
 }
