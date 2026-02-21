@@ -1,27 +1,47 @@
 <div class="pharmacy-front">
 
+  <!-- HEADER -->
   <div class="rx-page-header">
     <div class="header-inner">
       <div class="header-icon">
-        <i class="fas fa-pills"></i>
+        <i class="fas fa-hospital-symbol"></i>
       </div>
       <div>
         <div class="breadcrumb-label">Front Office / Pharmacy</div>
-        <h1>Available Medications</h1>
+        <h1>Pharmacy</h1>
       </div>
     </div>
   </div>
 
-  <div class="pf-content">
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn"
+            [class.active]="activeTab === 'medications'"
+            (click)="activeTab = 'medications'">
+      <i class="fas fa-pills"></i> Medications
+      <span class="tab-count">{{ medications.length }}</span>
+    </button>
+    <button class="tab-btn"
+            [class.active]="activeTab === 'prescriptions'"
+            (click)="activeTab = 'prescriptions'">
+      <i class="fas fa-file-prescription"></i> My Prescriptions
+      <span class="tab-count">{{ prescriptions.length }}</span>
+    </button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!--  TAB : MEDICATIONS                         -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div *ngIf="activeTab === 'medications'" class="pf-content">
 
     <!-- Loading -->
-    <div class="pf-state" *ngIf="loading">
+    <div class="pf-state" *ngIf="loadingMeds">
       <i class="fas fa-spinner fa-spin pf-state-icon"></i>
       <p>Loading medications...</p>
     </div>
 
     <!-- Error -->
-    <div class="pf-state pf-state--error" *ngIf="error && !loading">
+    <div class="pf-state pf-state--error" *ngIf="errorMeds && !loadingMeds">
       <i class="fas fa-exclamation-circle pf-state-icon"></i>
       <p>Failed to load medications.</p>
       <small>Please check your connection or try again later.</small>
@@ -31,14 +51,15 @@
     </div>
 
     <!-- Empty -->
-    <div class="pf-state" *ngIf="!loading && !error && medications.length === 0">
+    <div class="pf-state"
+         *ngIf="!loadingMeds && !errorMeds && medications.length === 0">
       <i class="fas fa-prescription-bottle pf-state-icon"></i>
       <p>No medications available.</p>
     </div>
 
     <!-- Cards Grid -->
     <div class="medication-list"
-         *ngIf="!loading && !error && medications.length > 0">
+         *ngIf="!loadingMeds && !errorMeds && medications.length > 0">
 
       <div class="medication-card"
            *ngFor="let med of medications"
@@ -47,9 +68,7 @@
 
         <!-- Header -->
         <div class="mc-header">
-          <div class="mc-icon">
-            <i class="fas fa-capsules"></i>
-          </div>
+          <div class="mc-icon"><i class="fas fa-capsules"></i></div>
           <div class="mc-title">
             <h3>{{ med.medicationName }}</h3>
             <span class="mc-id">#{{ med.id }}</span>
@@ -58,8 +77,12 @@
 
         <!-- Dosage / Route -->
         <div class="mc-meta" *ngIf="med.dosage || med.route">
-          <span *ngIf="med.dosage"><i class="fas fa-flask"></i> {{ med.dosage }}</span>
-          <span *ngIf="med.route"><i class="fas fa-route"></i> {{ med.route }}</span>
+          <span *ngIf="med.dosage">
+            <i class="fas fa-flask"></i> {{ med.dosage }}
+          </span>
+          <span *ngIf="med.route">
+            <i class="fas fa-route"></i> {{ med.route }}
+          </span>
         </div>
 
         <!-- Info -->
@@ -84,8 +107,7 @@
           <i class="fas fa-calendar-times"
              *ngIf="isExpiringSoon(med.endDate)"></i>
           <span>Expires: {{ med.endDate | date:'mediumDate' }}</span>
-          <span class="expiry-badge"
-                *ngIf="isExpiringSoon(med.endDate)">
+          <span class="expiry-badge" *ngIf="isExpiringSoon(med.endDate)">
             Expiring soon
           </span>
         </div>
@@ -112,6 +134,190 @@
 
       </div>
     </div>
-
   </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!--  TAB : MY PRESCRIPTIONS                    -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div *ngIf="activeTab === 'prescriptions'" class="pf-content">
+
+    <!-- Loading -->
+    <div class="pf-state" *ngIf="loadingRx">
+      <i class="fas fa-spinner fa-spin pf-state-icon"></i>
+      <p>Loading prescriptions...</p>
+    </div>
+
+    <!-- Error -->
+    <div class="pf-state pf-state--error" *ngIf="errorRx && !loadingRx">
+      <i class="fas fa-exclamation-circle pf-state-icon"></i>
+      <p>Failed to load prescriptions.</p>
+      <button class="btn-retry" (click)="loadPrescriptions()">
+        <i class="fas fa-redo"></i> Retry
+      </button>
+    </div>
+
+    <!-- Empty -->
+    <div class="pf-state"
+         *ngIf="!loadingRx && !errorRx && prescriptions.length === 0">
+      <i class="fas fa-file-prescription pf-state-icon"></i>
+      <p>No prescriptions found for your account.</p>
+    </div>
+
+    <!-- Prescription Cards -->
+    <div class="rx-list"
+         *ngIf="!loadingRx && !errorRx && prescriptions.length > 0">
+
+      <div class="rx-card"
+           *ngFor="let p of prescriptions"
+           [class.rx-card--expired]="isExpired(p.validUntil)">
+
+        <!-- Card Header -->
+        <div class="rx-card-header">
+          <div class="rx-icon">
+            <i class="fas fa-file-medical-alt"></i>
+          </div>
+          <div class="rx-card-meta">
+            <div class="rx-card-title">Dr. {{ p.prescribedBy || 'Unknown' }}</div>
+            <div class="rx-card-sub">
+              {{ p.prescriptionDate | date:'mediumDate' }}
+            </div>
+          </div>
+          <span class="status-badge" [ngClass]="statusClass(p.status)">
+            {{ p.status }}
+          </span>
+        </div>
+
+        <!-- Validity -->
+        <div class="rx-validity"
+             [class.rx-validity--expired]="isExpired(p.validUntil)">
+          <i class="fas fa-calendar-check"
+             *ngIf="!isExpired(p.validUntil)"></i>
+          <i class="fas fa-calendar-times"
+             *ngIf="isExpired(p.validUntil)"></i>
+          <span>Valid until: {{ p.validUntil | date:'mediumDate' }}</span>
+          <span class="expired-badge" *ngIf="isExpired(p.validUntil)">
+            Expired
+          </span>
+        </div>
+
+        <!-- Instructions -->
+        <p class="rx-instructions" *ngIf="p.instructions">
+          <i class="fas fa-info-circle"></i> {{ p.instructions }}
+        </p>
+
+        <!-- Medication Count -->
+        <div class="rx-meds-count">
+          <i class="fas fa-pills"></i>
+          <span>{{ p.medications?.length || 0 }} medication(s)</span>
+        </div>
+
+        <!-- View Button -->
+        <button class="rx-btn" (click)="view(p)">
+          <i class="fas fa-eye"></i> View Details
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!--  MODAL DETAIL PRESCRIPTION                 -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="modal-overlay" *ngIf="viewingPrescription" (click)="closeView()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <h3>
+          <i class="fas fa-file-prescription"></i> Prescription Details
+        </h3>
+        <button class="modal-close" (click)="closeView()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+
+        <div class="detail-grid">
+          <div class="detail-item">
+            <label>Prescribed By</label>
+            <span>{{ viewingPrescription.prescribedBy || '—' }}</span>
+          </div>
+          <div class="detail-item">
+            <label>Date</label>
+            <span>{{ viewingPrescription.prescriptionDate | date:'mediumDate' }}</span>
+          </div>
+          <div class="detail-item">
+            <label>Valid Until</label>
+            <span [class.text-danger]="isExpired(viewingPrescription.validUntil)">
+              {{ viewingPrescription.validUntil | date:'mediumDate' }}
+              <span *ngIf="isExpired(viewingPrescription.validUntil)">
+                ⚠️ Expired
+              </span>
+            </span>
+          </div>
+          <div class="detail-item">
+            <label>Status</label>
+            <span class="status-badge"
+                  [ngClass]="statusClass(viewingPrescription.status)">
+              {{ viewingPrescription.status }}
+            </span>
+          </div>
+          <div class="detail-item" *ngIf="viewingPrescription.consultationId">
+            <label>Consultation ID</label>
+            <span>{{ viewingPrescription.consultationId }}</span>
+          </div>
+          <div class="detail-item full" *ngIf="viewingPrescription.instructions">
+            <label>Instructions</label>
+            <span>{{ viewingPrescription.instructions }}</span>
+          </div>
+        </div>
+
+        <!-- Medications List -->
+        <div class="modal-section-label">
+          <i class="fas fa-pills"></i> Medications
+        </div>
+
+        <div class="med-list"
+             *ngIf="viewingPrescription.medications?.length; else noMeds">
+          <div class="med-item"
+               *ngFor="let m of viewingPrescription.medications">
+            <div class="med-item__name">
+              <i class="fas fa-capsules"></i> {{ m.medicationName }}
+            </div>
+            <div class="med-item__details">
+              <span *ngIf="m.dosage">
+                <i class="fas fa-flask"></i> {{ m.dosage }}
+              </span>
+              <span *ngIf="m.route">
+                <i class="fas fa-route"></i> {{ m.route }}
+              </span>
+              <span *ngIf="m.frequency">
+                <i class="fas fa-redo"></i> {{ m.frequency }}×/day
+              </span>
+              <span *ngIf="m.duration">
+                <i class="fas fa-clock"></i> {{ m.duration }} days
+              </span>
+              <span>
+                <i class="fas fa-boxes"></i> Qty: {{ m.quantity }}
+              </span>
+              <span *ngIf="m.startDate">
+                <i class="fas fa-calendar-plus"></i>
+                Start: {{ m.startDate | date:'mediumDate' }}
+              </span>
+              <span *ngIf="m.endDate">
+                <i class="fas fa-calendar-alt"></i>
+                End: {{ m.endDate | date:'mediumDate' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <ng-template #noMeds>
+          <p class="no-meds-text">No medications in this prescription.</p>
+        </ng-template>
+
+      </div>
+    </div>
+  </div>
+
 </div>
