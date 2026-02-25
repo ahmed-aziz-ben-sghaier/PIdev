@@ -5,6 +5,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { PharmacyService, Medication } from '../../services/pharmacy.service';
 import { PrescriptionService, Prescription, PrescriptionStatus } from '../../services/prescription.service';
 import { MedicationRoute } from '../../services/medication-route.enum';
+import { NotificationService } from '../../services/notification.service'; // ← AJOUTÉ
 
 @Component({
   selector: 'app-pharmacy',
@@ -27,7 +28,7 @@ export class PharmacyComponent implements OnInit {
   // ── Prescriptions ─────────────────────────────
   prescriptions: Prescription[] = [];
   prescriptionForm!: FormGroup;
-  selectedPrescriptionId: string | null = null;  // ← NOUVEAU
+  selectedPrescriptionId: string | null = null;
   viewingPrescription: Prescription | null = null;
 
   // ── Shared ────────────────────────────────────
@@ -37,7 +38,8 @@ export class PharmacyComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private pharmacyService: PharmacyService,
-    private prescriptionService: PrescriptionService
+    private prescriptionService: PrescriptionService,
+    private notif: NotificationService  // ← AJOUTÉ
   ) {}
 
   ngOnInit(): void {
@@ -65,16 +67,58 @@ export class PharmacyComponent implements OnInit {
   }
 
   loadMedications(): void {
-    this.pharmacyService.getAll().subscribe(data => this.medications = data);
+    this.pharmacyService.getAll().subscribe({
+      next: data => {
+        this.medications = data;
+
+        // ✅ Alerte stock épuisé
+        const outStock = data.filter(m => m.quantity === 0);
+        if (outStock.length > 0) {
+          this.notif.error(
+            'Out of Stock!',
+            `${outStock.length} medication(s) are completely out of stock`
+          );
+        }
+
+        // ✅ Alerte stock faible
+        const lowStock = data.filter(m => m.quantity > 0 && m.quantity < 10);
+        if (lowStock.length > 0) {
+          this.notif.warning(
+            'Low Stock Alert',
+            `${lowStock.length} medication(s) have less than 10 units left`
+          );
+        }
+      },
+      error: () => {
+        this.notif.error('Load Failed', 'Could not load medications from server');
+      }
+    });
   }
 
   submitMedication(): void {
     if (this.medicationForm.invalid) return;
     const med: Medication = this.medicationForm.value;
+
     if (this.selectedMedId) {
-      this.pharmacyService.update(this.selectedMedId, med).subscribe(() => this.resetMedicationForm());
+      this.pharmacyService.update(this.selectedMedId, med).subscribe({
+        next: () => {
+          this.notif.success('Updated!', `${med.medicationName} has been updated`);
+          this.resetMedicationForm();
+        },
+        error: () => {
+          this.notif.error('Update Failed', `Could not update ${med.medicationName}`);
+        }
+      });
     } else {
-      this.pharmacyService.create(med).subscribe(() => this.resetMedicationForm());
+      this.pharmacyService.create(med).subscribe({
+        next: () => {
+          this.notif.success('Medication Added!', `${med.medicationName} added to pharmacy`);
+          this.resetMedicationForm();
+        },
+        error: () => {
+          this.notif.error('Create Failed', `Could not add ${med.medicationName}`);
+        }
+      });
     }
   }
 
@@ -82,13 +126,23 @@ export class PharmacyComponent implements OnInit {
     this.selectedMedId = med.id!;
     this.medicationForm.patchValue(med);
     this.activeTab = 'medications';
+    this.notif.info('Edit Mode', `Now editing: ${med.medicationName}`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   deleteMedication(id?: string): void {
     if (!id) return;
+    const med = this.medications.find(m => m.id === id);
     if (confirm('Delete this medication?')) {
-      this.pharmacyService.delete(id).subscribe(() => this.loadMedications());
+      this.pharmacyService.delete(id).subscribe({
+        next: () => {
+          this.notif.success('Deleted!', `${med?.medicationName || 'Medication'} has been deleted`);
+          this.loadMedications();
+        },
+        error: () => {
+          this.notif.error('Delete Failed', 'Could not delete this medication');
+        }
+      });
     }
   }
 
@@ -141,37 +195,75 @@ export class PharmacyComponent implements OnInit {
   }
 
   loadPrescriptions(): void {
-    this.prescriptionService.getAll().subscribe(data => this.prescriptions = data);
+    this.prescriptionService.getAll().subscribe({
+      next: data => {
+        this.prescriptions = data;
+
+        // ✅ Alerte prescriptions expirées
+        const expired = data.filter(p => this.isExpired(p.validUntil));
+        if (expired.length > 0) {
+          this.notif.warning(
+            'Expired Prescriptions',
+            `${expired.length} prescription(s) have expired`
+          );
+        }
+
+        // ✅ Alerte prescriptions en attente
+        const pending = data.filter(p => p.status === 'PENDING');
+        if (pending.length > 0) {
+          this.notif.info(
+            'Pending Prescriptions',
+            `${pending.length} prescription(s) waiting for approval`
+          );
+        }
+      },
+      error: () => {
+        this.notif.error('Load Failed', 'Could not load prescriptions from server');
+      }
+    });
   }
 
   submitPrescription(): void {
-  if (this.prescriptionForm.invalid) return;
-  const prescription: Prescription = this.prescriptionForm.value;
+    if (this.prescriptionForm.invalid) return;
+    const prescription: Prescription = this.prescriptionForm.value;
 
-  if (this.selectedPrescriptionId) {
-    // Backend n'a pas PUT /{id} → on delete puis on recrée
-    this.prescriptionService.delete(this.selectedPrescriptionId).subscribe(() => {
-      this.prescriptionService.create(prescription).subscribe(() => {
-        this.resetPrescriptionForm();
+    if (this.selectedPrescriptionId) {
+      this.prescriptionService.delete(this.selectedPrescriptionId).subscribe({
+        next: () => {
+          this.prescriptionService.create(prescription).subscribe({
+            next: () => {
+              this.notif.success('Prescription Updated!', 'Prescription updated successfully');
+              this.resetPrescriptionForm();
+            },
+            error: () => {
+              this.notif.error('Update Failed', 'Could not update the prescription');
+            }
+          });
+        },
+        error: () => {
+          this.notif.error('Update Failed', 'Could not update the prescription');
+        }
       });
-    });
-  } else {
-    this.prescriptionService.create(prescription).subscribe(() => {
-      this.resetPrescriptionForm();
-    });
+    } else {
+      this.prescriptionService.create(prescription).subscribe({
+        next: () => {
+          this.notif.success('Prescription Created!', 'New prescription has been saved');
+          this.resetPrescriptionForm();
+        },
+        error: () => {
+          this.notif.error('Create Failed', 'Could not create the prescription');
+        }
+      });
+    }
   }
-}
 
-  // ✅ NOUVEAU — Edit prescription
   editPrescription(p: Prescription): void {
     this.selectedPrescriptionId = p.id!;
 
-    // Vider le FormArray d'abord
     while (this.medicationsArray.length) {
       this.medicationsArray.removeAt(0);
     }
 
-    // Remplir le formulaire avec les données de la prescription
     this.prescriptionForm.patchValue({
       prescriptionDate: p.prescriptionDate,
       validUntil:       p.validUntil,
@@ -182,25 +274,40 @@ export class PharmacyComponent implements OnInit {
       status:           p.status
     });
 
-    // Remplir les médicaments
     if (p.medications && p.medications.length > 0) {
       p.medications.forEach(med => {
         this.medicationsArray.push(this.newMedicationGroup(med));
       });
     }
 
-    // Scroll vers le formulaire
+    this.notif.info('Edit Mode', `Editing prescription from Dr. ${p.prescribedBy || 'Unknown'}`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   updateStatus(id: string, status: PrescriptionStatus): void {
-    this.prescriptionService.updateStatus(id, status).subscribe(() => this.loadPrescriptions());
+    this.prescriptionService.updateStatus(id, status).subscribe({
+      next: () => {
+        this.notif.success('Status Updated!', `Prescription is now ${status}`);
+        this.loadPrescriptions();
+      },
+      error: () => {
+        this.notif.error('Update Failed', 'Could not update prescription status');
+      }
+    });
   }
 
   deletePrescription(id?: string): void {
     if (!id) return;
     if (confirm('Delete this prescription?')) {
-      this.prescriptionService.delete(id).subscribe(() => this.loadPrescriptions());
+      this.prescriptionService.delete(id).subscribe({
+        next: () => {
+          this.notif.success('Deleted!', 'Prescription has been deleted');
+          this.loadPrescriptions();
+        },
+        error: () => {
+          this.notif.error('Delete Failed', 'Could not delete this prescription');
+        }
+      });
     }
   }
 
@@ -215,7 +322,7 @@ export class PharmacyComponent implements OnInit {
   resetPrescriptionForm(): void {
     this.prescriptionForm.reset({ status: 'PENDING' });
     while (this.medicationsArray.length) this.medicationsArray.removeAt(0);
-    this.selectedPrescriptionId = null;  // ← RESET
+    this.selectedPrescriptionId = null;
     this.loadPrescriptions();
   }
 
